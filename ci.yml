@@ -1,0 +1,40 @@
+name: CI SIGEPP
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  pruebas:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: [ "3.11", "3.12" ]
+    steps:
+      - name: Descargar el código
+        uses: actions/checkout@v4
+
+      - name: Configurar Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: pip
+
+      - name: Instalar dependencias
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements-dev.txt
+
+      - name: Análisis estático (flake8)
+        run: flake8 app tests
+
+      - name: Pruebas unitarias
+        run: pytest tests/unit
+
+      - name: Pruebas de integración
+        run: pytest tests/integration
+
+      - name: Pruebas de sistema + cobertura (mínimo 80 %)
+        run: pytest --cov=app --cov-report=term-missing --cov-fail-under=80
