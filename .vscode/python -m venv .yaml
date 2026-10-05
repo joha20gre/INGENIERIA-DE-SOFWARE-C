@@ -1,0 +1,20 @@
+python -m venv .venv
+# Windows: .venv\Scripts\activate    |   Linux/macOS: source .venv/bin/activate
+pip install -r requirements-dev.txt
+flask --app app seed-db      # crea la base con datos de ejemplo
+flask --app app run --debug  # abre http://127.0.0.1:5000
+pytest tests/unit          # pruebas unitarias (modelo de dominio)
+pytest tests/integration   # servicios + SQLite
+pytest tests/system        # flujos HTTP completos
+pytest --cov=app --cov-report=term-missing   # todo + cobertura
+flake8 app tests           # análisis estático
+app/            código fuente (models, services, routes, db, plantillas)
+tests/          unit/, integration/, system/
+docs/           SRS, plan del proyecto, evaluación ISO/IEC 25010, diagramas UML
+jira/           backlog_jira.csv para importar en Jira
+scripts/        medición de rendimiento
+git init -b main
+git add .
+git commit -m "SIGEPP v1.0"
+git remote add origin https://github.com/USUARIO/sigepp.git
+git push -u origin main 
